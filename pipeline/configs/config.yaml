@@ -1,0 +1,13 @@
+detection:
+  model: yolov8n.pt
+  confidence_threshold: 0.4
+
+tracking:
+  max_disappeared_frames: 30
+
+events:
+  emit_zone_events: true
+  emit_dwell_events: true
+
+store:
+  id: STORE_BLR_001
