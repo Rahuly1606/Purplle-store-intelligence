@@ -1,32 +1,26 @@
-from typing import Dict
+import json
+from pathlib import Path
+
+
+CONFIG_PATH = (
+    Path(__file__).resolve()
+    .parent.parent.parent
+    / "config"
+    / "zones.json"
+)
 
 
 class ZoneManager:
 
     def __init__(self):
 
-        self.zones: Dict[str, tuple] = {
+        with open(CONFIG_PATH) as f:
+            data = json.load(f)
 
-            "ENTRY": (
-                700,
-                550,
-                1100,
-                950
-            ),
-
-            "SKINCARE": (
-                1101,
-                550,
-                1500,
-                950
-            ),
-
-            "BILLING": (
-                1501,
-                300,
-                1920,
-                950
-            )
+        self.zones = {
+            name: tuple(coords)
+            for name, coords
+            in data["zones"].items()
         }
 
     def get_zone(

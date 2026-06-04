@@ -2,7 +2,7 @@ class HysteresisManager:
 
     def __init__(
         self,
-        threshold=3
+        threshold=10
     ):
 
         self.threshold = threshold
@@ -32,6 +32,10 @@ class HysteresisManager:
         current = self.current_zone[
             track_id
         ]
+
+        if detected_zone is None:
+
+            return current
 
         # no change
 
@@ -114,3 +118,23 @@ class HysteresisManager:
             return detected_zone
 
         return current
+
+    def remove_track(
+        self,
+        track_id
+    ):
+
+        self.current_zone.pop(
+            track_id,
+            None
+        )
+
+        self.candidate_zone.pop(
+            track_id,
+            None
+        )
+
+        self.candidate_count.pop(
+            track_id,
+            None
+        )
