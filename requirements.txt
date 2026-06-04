@@ -1,28 +1,10 @@
 fastapi
 uvicorn[standard]
-
 sqlalchemy
 pydantic
-
-opencv-python
-ultralytics
-openpyxl
-
-numpy
-pandas
-
 python-multipart
 
-pytest
-httpx
-
-python-json-logger
-
-pyyaml
-
-rich
-
-# dashboard
 streamlit
 plotly
+pandas
 Pillow
