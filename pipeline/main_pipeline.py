@@ -1,7 +1,6 @@
 import sys
 from pathlib import Path
 
-# Add project root to path
 sys.path.append(
     str(Path(__file__).resolve().parent.parent)
 )
@@ -9,8 +8,13 @@ sys.path.append(
 import cv2
 
 from pipeline.detection.detector import PersonDetector
-from pipeline.tracking.tracker import CentroidTracker
+
+from pipeline.zones.zone_manager import ZoneManager
+
+from pipeline.events.state_manager import StateManager
+
 from pipeline.events.event_builder import EventBuilder
+
 from pipeline.events.emitter import EventEmitter
 
 
@@ -23,19 +27,24 @@ CAMERA_ID = "CAM_ENTRY_01"
 OUTPUT_FILE = "data/events/generated_events.jsonl"
 
 
+def get_center(bbox):
+
+    x1, y1, x2, y2 = bbox
+
+    center_x = int((x1 + x2) / 2)
+
+    center_y = int((y1 + y2) / 2)
+
+    return center_x, center_y
+
+
 def main():
-
-    if not Path(VIDEO_PATH).exists():
-
-        print(
-            f"Video not found: {VIDEO_PATH}"
-        )
-
-        return
 
     detector = PersonDetector()
 
-    tracker = CentroidTracker()
+    zone_manager = ZoneManager()
+
+    state_manager = StateManager()
 
     emitter = EventEmitter(
         OUTPUT_FILE
@@ -47,8 +56,6 @@ def main():
 
     frame_count = 0
 
-    seen_tracks = set()
-
     while True:
 
         success, frame = cap.read()
@@ -58,44 +65,78 @@ def main():
 
         frame_count += 1
 
-        # Process every 10th frame
         if frame_count % 10 != 0:
             continue
 
-        detections = detector.detect(
+        tracked = detector.track(
             frame
-        )
-
-        tracked = tracker.update(
-            detections
         )
 
         for person in tracked:
 
-            track_id = person["track_id"]
+            track_id = person[
+                "track_id"
+            ]
 
-            visitor_id = (
-                f"VIS_{track_id}"
+            bbox = person[
+                "bbox"
+            ]
+
+            center_x, center_y = (
+                get_center(
+                    bbox
+                )
             )
 
-            if track_id not in seen_tracks:
+            zone = (
+                zone_manager.get_zone(
+                    center_x,
+                    center_y
+                )
+            )
 
-                seen_tracks.add(
-                    track_id
+            events = (
+                state_manager.update(
+                    track_id,
+                    zone
+                )
+            )
+
+            for event_type, zone_id in events:
+
+                visitor_id = (
+                    f"VIS_{track_id}"
                 )
 
                 event = (
                     EventBuilder.entry_event(
-                        visitor_id=visitor_id,
-                        store_id=STORE_ID,
-                        camera_id=CAMERA_ID
+                        visitor_id=
+                            visitor_id,
+
+                        store_id=
+                            STORE_ID,
+
+                        camera_id=
+                            CAMERA_ID
                     )
                 )
 
-                emitter.emit(event)
+                event[
+                    "event_type"
+                ] = event_type
+
+                event[
+                    "zone_id"
+                ] = zone_id
+
+                emitter.emit(
+                    event
+                )
 
                 print(
-                    f"ENTRY -> {visitor_id}"
+                    f"{event_type} -> "
+                    f"{visitor_id} "
+                    f"ZONE={zone_id}"
                 )
 
     cap.release()
