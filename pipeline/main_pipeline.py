@@ -26,6 +26,8 @@ from pipeline.analytics.path_analyzer import PathAnalyzer
 from pipeline.analytics.funnel_analyzer import FunnelAnalyzer
 from pipeline.analytics.occupancy_analyzer import OccupancyAnalyzer
 from pipeline.analytics.heatmap_generator import HeatmapGenerator
+from pipeline.visualization.video_annotator import VideoAnnotator
+from pipeline.reporting.final_report_generator import FinalReportGenerator
 
 
 VIDEO_PATH = "data/videos/sample.mp4"
@@ -88,6 +90,12 @@ def main():
 
     detector = PersonDetector()
 
+    annotator = VideoAnnotator()
+
+    report_generator = (
+        FinalReportGenerator()
+    )
+
     zone_manager = ZoneManager()
 
     hysteresis = HysteresisManager(
@@ -118,6 +126,27 @@ def main():
 
     cap = cv2.VideoCapture(
         VIDEO_PATH
+    )
+
+    width = int(
+        cap.get(
+            cv2.CAP_PROP_FRAME_WIDTH
+        )
+    )
+
+    height = int(
+        cap.get(
+            cv2.CAP_PROP_FRAME_HEIGHT
+        )
+    )
+
+    writer = cv2.VideoWriter(
+        "outputs/annotated_store_video.mp4",
+        cv2.VideoWriter_fourcc(
+            *"mp4v"
+        ),
+        30,
+        (width, height)
     )
 
     frame_count = 0
@@ -236,6 +265,20 @@ def main():
                 )
             )
 
+            is_staff = (
+                staff_classifier.is_staff(
+                    visitor_id
+                )
+            )
+
+            annotator.draw(
+                frame,
+                bbox,
+                visitor_id,
+                zone,
+                is_staff
+            )
+
             print(
                 f"TRACK={track_id} "
                 f"VIS={visitor_id} "
@@ -352,6 +395,11 @@ def main():
                     f"{visitor_id}"
                 )
 
+        # write annotated frame
+        writer.write(
+            frame
+        )
+
         # EXIT DETECTION
 
         exited_tracks = (
@@ -446,6 +494,8 @@ def main():
             )
 
     cap.release()
+
+    writer.release()
 
     heatmap_generator.generate(
         width=1920,
@@ -582,6 +632,11 @@ def main():
 
     with open(METRICS_FILE, "w") as f:
         json.dump(metrics, f, indent=2)
+
+    report_generator.generate(
+        metrics,
+        "outputs/final_report.json"
+    )
 
     print(
         f"\nMetrics saved to {METRICS_FILE}"
