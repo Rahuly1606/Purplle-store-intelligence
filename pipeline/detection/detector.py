@@ -3,17 +3,17 @@ from ultralytics import YOLO
 
 class PersonDetector:
 
-    def __init__(
-        self,
-        model_path="yolov8n.pt"
-    ):
-        self.model = YOLO(model_path)
+    def __init__(self):
 
-    def detect(self, frame):
+        self.model = YOLO("yolov8n.pt")
 
-        results = self.model(
+    def track(self, frame):
+
+        results = self.model.track(
             frame,
-            classes=[0],
+            classes=[0],          # person only
+            persist=True,
+            tracker="bytetrack.yaml",
             verbose=False
         )
 
@@ -21,23 +21,30 @@ class PersonDetector:
 
         for result in results:
 
-            for box in result.boxes:
+            if result.boxes.id is None:
+                continue
 
-                x1, y1, x2, y2 = (
-                    box.xyxy[0]
-                    .cpu()
-                    .numpy()
-                )
+            boxes = result.boxes.xyxy.cpu().numpy()
+            ids = result.boxes.id.cpu().numpy()
+            confs = result.boxes.conf.cpu().numpy()
+
+            for box, track_id, conf in zip(
+                boxes,
+                ids,
+                confs
+            ):
+
+                x1, y1, x2, y2 = box
 
                 detections.append({
+                    "track_id": int(track_id),
                     "bbox": [
                         float(x1),
                         float(y1),
                         float(x2),
                         float(y2)
                     ],
-                    "confidence":
-                        float(box.conf[0])
+                    "confidence": float(conf)
                 })
 
         return detections
