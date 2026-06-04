@@ -1,0 +1,87 @@
+{
+  "total_visitors": 11,
+  "staff_count": 4,
+  "customer_count": 7,
+  "avg_dwell_time": {
+    "FOH": 15.27,
+    "ALPS": 11.6,
+    "MENS_CARE": 12.78,
+    "CASH_COUNTER": 21.0,
+    "BEAUTY_ESSENTIAL": 23.13
+  },
+  "zone_visits": {
+    "FOH": 5,
+    "ALPS": 5,
+    "MENS_CARE": 3,
+    "CASH_COUNTER": 5,
+    "BEAUTY_ESSENTIAL": 5
+  },
+  "zone_funnel": {
+    "FOH": 3,
+    "CASH_COUNTER": 5,
+    "ALPS": 1,
+    "MENS_CARE": 1,
+    "BEAUTY_ESSENTIAL": 6
+  },
+  "peak_occupancy": {
+    "FOH": 2,
+    "CASH_COUNTER": 2,
+    "ALPS": 1,
+    "MENS_CARE": 1,
+    "BEAUTY_ESSENTIAL": 2
+  },
+  "conversion_rate": {
+    "FOH_TO_CASH_COUNTER": 0.6667
+  },
+  "visitor_paths": {
+    "VIS_1": [
+      "FOH",
+      "ALPS",
+      "MENS_CARE",
+      "ALPS",
+      "FOH",
+      "ALPS",
+      "MENS_CARE",
+      "ALPS",
+      "MENS_CARE",
+      "ALPS",
+      "FOH"
+    ],
+    "VIS_2": [
+      "CASH_COUNTER",
+      "FOH",
+      "CASH_COUNTER",
+      "FOH"
+    ],
+    "VIS_8": [
+      "CASH_COUNTER",
+      "BEAUTY_ESSENTIAL"
+    ],
+    "VIS_18": [
+      "BEAUTY_ESSENTIAL"
+    ],
+    "VIS_41": [
+      "BEAUTY_ESSENTIAL"
+    ],
+    "VIS_43": [
+      "CASH_COUNTER"
+    ],
+    "VIS_49": [
+      "BEAUTY_ESSENTIAL"
+    ],
+    "VIS_50": [
+      "BEAUTY_ESSENTIAL"
+    ],
+    "VIS_62": [
+      "FOH",
+      "CASH_COUNTER",
+      "FOH"
+    ],
+    "VIS_58": [
+      "BEAUTY_ESSENTIAL"
+    ],
+    "VIS_74": [
+      "CASH_COUNTER"
+    ]
+  }
+}
