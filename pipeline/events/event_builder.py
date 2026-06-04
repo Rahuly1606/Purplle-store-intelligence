@@ -1,5 +1,8 @@
 from uuid import uuid4
-from datetime import datetime, timezone
+from datetime import (
+    datetime,
+    timezone
+)
 
 
 class EventBuilder:
@@ -22,27 +25,38 @@ class EventBuilder:
 
         return {
 
-            "event_id": str(uuid4()),
+            "event_id":
+                str(uuid4()),
 
-            "store_id": store_id,
+            "store_id":
+                store_id,
 
-            "camera_id": camera_id,
+            "camera_id":
+                camera_id,
 
-            "visitor_id": visitor_id,
+            "visitor_id":
+                visitor_id,
 
-            "event_type": event_type,
+            "event_type":
+                event_type,
 
-            "timestamp": datetime.now(
-                timezone.utc
-            ).isoformat(),
+            "timestamp":
+                datetime.now(
+                    timezone.utc
+                ).isoformat(),
 
-            "zone_id": zone_id,
+            "zone_id":
+                zone_id,
 
-            "dwell_ms": dwell_ms,
+            "dwell_ms":
+                dwell_ms,
 
-            "is_staff": is_staff,
+            "is_staff":
+                is_staff,
 
-            "confidence": confidence,
+            "confidence":
+                confidence,
 
-            "metadata": metadata
+            "metadata":
+                metadata
         }

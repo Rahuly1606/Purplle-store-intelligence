@@ -8,13 +8,12 @@ sys.path.append(
 import cv2
 
 from pipeline.detection.detector import PersonDetector
-
 from pipeline.zones.zone_manager import ZoneManager
 
 from pipeline.events.state_manager import StateManager
+from pipeline.events.exit_manager import ExitManager
 
 from pipeline.events.event_builder import EventBuilder
-
 from pipeline.events.emitter import EventEmitter
 
 
@@ -46,6 +45,10 @@ def main():
 
     state_manager = StateManager()
 
+    exit_manager = ExitManager(
+        max_missing_frames=50
+    )
+
     emitter = EventEmitter(
         OUTPUT_FILE
     )
@@ -72,11 +75,17 @@ def main():
             frame
         )
 
+        active_track_ids = []
+
         for person in tracked:
 
             track_id = person[
                 "track_id"
             ]
+
+            active_track_ids.append(
+                track_id
+            )
 
             bbox = person[
                 "bbox"
@@ -95,21 +104,27 @@ def main():
                 )
             )
 
-            events = (
+            state_events = (
                 state_manager.update(
                     track_id,
                     zone
                 )
             )
 
-            for event_type, zone_id in events:
+            for (
+                event_type,
+                zone_id
+            ) in state_events:
 
                 visitor_id = (
                     f"VIS_{track_id}"
                 )
 
                 event = (
-                    EventBuilder.entry_event(
+                    EventBuilder.build_event(
+                        event_type=
+                            event_type,
+
                         visitor_id=
                             visitor_id,
 
@@ -117,27 +132,60 @@ def main():
                             STORE_ID,
 
                         camera_id=
-                            CAMERA_ID
+                            CAMERA_ID,
+
+                        zone_id=
+                            zone_id
                     )
                 )
-
-                event[
-                    "event_type"
-                ] = event_type
-
-                event[
-                    "zone_id"
-                ] = zone_id
 
                 emitter.emit(
                     event
                 )
 
                 print(
-                    f"{event_type} -> "
-                    f"{visitor_id} "
-                    f"ZONE={zone_id}"
+                    f"{event_type}"
+                    f" -> "
+                    f"{visitor_id}"
                 )
+
+        # EXIT detection
+        exited_tracks = (
+            exit_manager.update(
+                active_track_ids,
+                frame_count
+            )
+        )
+
+        for track_id in exited_tracks:
+
+            visitor_id = (
+                f"VIS_{track_id}"
+            )
+
+            event = (
+                EventBuilder.build_event(
+                    event_type="EXIT",
+
+                    visitor_id=
+                        visitor_id,
+
+                    store_id=
+                        STORE_ID,
+
+                    camera_id=
+                        CAMERA_ID
+                )
+            )
+
+            emitter.emit(
+                event
+            )
+
+            print(
+                f"EXIT -> "
+                f"{visitor_id}"
+            )
 
     cap.release()
 
