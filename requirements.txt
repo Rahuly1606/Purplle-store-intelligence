@@ -21,3 +21,8 @@ python-json-logger
 pyyaml
 
 rich
+
+# dashboard
+streamlit
+plotly
+Pillow
