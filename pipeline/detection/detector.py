@@ -11,9 +11,11 @@ class PersonDetector:
 
         results = self.model.track(
             frame,
-            classes=[0],          # person only
+            classes=[0],
             persist=True,
             tracker="bytetrack.yaml",
+            conf=0.25,
+            iou=0.5,
             verbose=False
         )
 
@@ -33,6 +35,9 @@ class PersonDetector:
                 ids,
                 confs
             ):
+
+                if conf < 0.40:
+                    continue
 
                 x1, y1, x2, y2 = box
 

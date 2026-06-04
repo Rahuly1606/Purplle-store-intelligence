@@ -4,6 +4,8 @@ class StateManager:
 
         self.track_states = {}
 
+        self.seen_tracks = set()
+
     def update(
         self,
         track_id,
@@ -12,27 +14,31 @@ class StateManager:
 
         events = []
 
-        previous_zone = self.track_states.get(
-            track_id
-        )
+        # First time seeing this track
+        if track_id not in self.seen_tracks:
 
-        # First appearance
-        if previous_zone is None:
+            self.seen_tracks.add(
+                track_id
+            )
 
             self.track_states[
                 track_id
             ] = current_zone
 
-            if current_zone == "ENTRY":
-
-                events.append(
-                    (
-                        "ENTRY",
-                        current_zone
-                    )
+            events.append(
+                (
+                    "ENTRY",
+                    current_zone
                 )
+            )
 
             return events
+
+        previous_zone = (
+            self.track_states.get(
+                track_id
+            )
+        )
 
         # Zone transition
         if previous_zone != current_zone:

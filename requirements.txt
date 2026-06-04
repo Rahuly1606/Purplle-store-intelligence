@@ -6,6 +6,7 @@ pydantic
 
 opencv-python
 ultralytics
+openpyxl
 
 numpy
 pandas

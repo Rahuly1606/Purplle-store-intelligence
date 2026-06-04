@@ -8,24 +8,24 @@ class ZoneManager:
         self.zones: Dict[str, tuple] = {
 
             "ENTRY": (
-                0,
-                0,
-                300,
-                300
+                700,
+                550,
+                1100,
+                950
             ),
 
             "SKINCARE": (
-                301,
-                0,
-                700,
-                500
+                1101,
+                550,
+                1500,
+                950
             ),
 
             "BILLING": (
-                701,
-                0,
-                1200,
-                500
+                1501,
+                300,
+                1920,
+                950
             )
         }
 
@@ -47,7 +47,6 @@ class ZoneManager:
                 and
                 y1 <= center_y <= y2
             ):
-
                 return zone_name
 
         return None

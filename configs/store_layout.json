@@ -1,0 +1,33 @@
+{
+    "store_id": "STORE_BLR_001",
+    "zones": [
+        {
+            "zone_id": "FOH",
+            "type": "common"
+        },
+        {
+            "zone_id": "MAKEUP_UNIT",
+            "type": "engagement"
+        },
+        {
+            "zone_id": "CASH_COUNTER",
+            "type": "billing"
+        },
+        {
+            "zone_id": "MENS_CARE",
+            "type": "product"
+        },
+        {
+            "zone_id": "ALPS",
+            "type": "product"
+        },
+        {
+            "zone_id": "LOREAL",
+            "type": "product"
+        },
+        {
+            "zone_id": "BEAUTY_ESSENTIAL",
+            "type": "product"
+        }
+    ]
+}
